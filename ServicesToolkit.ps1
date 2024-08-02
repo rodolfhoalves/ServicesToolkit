@@ -223,7 +223,7 @@ function Option-3 {
     }
 
     function GetLogonAsaService{
-        # Define o caminho do arquivo de política
+        # Sets the policy file path
             $seceditOutputPath = "$env:TEMP\seceditExport.inf"
 
             # Exporta as políticas locais para um arquivo
