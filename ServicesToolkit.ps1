@@ -7,7 +7,13 @@
 #    Email:   
 # ===========================================
 
-# testing
+function AdminCheck{
+    $adminCheck = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    return $adminCheck
+}
+
+# Check if the user is running the Powershell script as Administrator
+if (-not $AdminCheck) {throw "The PowerShell script is NOT running as Administrator."}
 
 # Function to display menu and get user choice
 function Show-Menu {
