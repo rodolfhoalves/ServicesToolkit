@@ -232,16 +232,16 @@ function Option-3 {
         # Sets the policy file path
             $seceditOutputPath = "$env:TEMP\seceditExport.inf"
 
-            # Exporta as políticas locais para um arquivo
+            # Exports local policies to a file
             secedit /export /cfg $seceditOutputPath /quiet
 
-            # Lê o conteúdo do arquivo de política
+            # Reads the contents of the policy file
             $seceditContent = Get-Content -Path $seceditOutputPath
 
-            # Encontra a linha que contém as permissões de "Logon as a service"
+            # Find the line containing the "Logon as a service" permissions
             $logonAsServiceLine = $seceditContent | Select-String -Pattern "SeServiceLogonRight"
 
-            # Extrai os usuários que têm permissão para logar como serviço
+            # Extract users who are allowed to log in as a service
             if ($logonAsServiceLine) {
                 $logonAsServiceUsers = $logonAsServiceLine -replace "SeServiceLogonRight\s*=\s*", ""
                 $logonAsServiceUsers = $logonAsServiceUsers -split ","
