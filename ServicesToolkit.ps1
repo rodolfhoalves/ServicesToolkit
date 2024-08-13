@@ -246,13 +246,21 @@ function Option-3 {
                 $logonAsServiceUsers = $logonAsServiceLine -replace "SeServiceLogonRight\s*=\s*", ""
                 $logonAsServiceUsers = $logonAsServiceUsers -split ","
                 
-                Write-Host "Usuários com permissão para logar como serviço:"
+		Write-Host ""
+                Write-Host "Users with permission to log in as a service:" -ForegroundColor Yellow
                 foreach ($user in $logonAsServiceUsers) {
-                    Write-Host $user.Trim()
-                }
-            } else {
-                Write-Host "Nenhuma configuração encontrada para 'Logon as a service'."
-            }
+			try {
+				$SIDstr = ($user.Substring(1))
+				$SID = New-Object System.Security.Principal.SecurityIdentifier($SIDstr)
+				$objUser = $SID.Translate([System.Security.Principal.NTAccount])
+				Write-Host $objUser.value " (SID: $user)"}
+			catch {
+				Write-Host $user.Trim()
+			}
+		}
+	} else {
+		Write-Host "No settings found for 'Logon as a service'." -ForegroundColor Red
+    	}
 
             # Remove o arquivo de política exportado
             Remove-Item -Path $seceditOutputPath
@@ -272,21 +280,28 @@ function Option-3 {
             $replaceTokenPrivilegeLine = $seceditContent | Select-String -Pattern "SeAssignPrimaryTokenPrivilege"
 
             # Extrai os usuários e grupos que têm permissão para "Replace a process level token"
-            if ($replaceTokenPrivilegeLine) {
+	    if ($replaceTokenPrivilegeLine) {
                 $replaceTokenPrivilegeUsers = $replaceTokenPrivilegeLine -replace "SeAssignPrimaryTokenPrivilege\s*=\s*", ""
                 $replaceTokenPrivilegeUsers = $replaceTokenPrivilegeUsers -split ","
                 
-                Write-Host "Usuários e grupos com permissão para 'Replace a process level token':"
+		Write-Host ""
+                Write-Host "Users and groups with permission to 'Replace a process level token':" -ForegroundColor Yellow
                 foreach ($user in $replaceTokenPrivilegeUsers) {
-                    Write-Host $user.Trim()
+			try {
+				$SIDstr = ($user.Substring(1))
+				$SID = New-Object System.Security.Principal.SecurityIdentifier($SIDstr)
+				$objUser = $SID.Translate([System.Security.Principal.NTAccount])
+				Write-Host $objUser.value " (SID: $user)"}
+			catch {
+				Write-Host $user.Trim()
+			}
                 }
             } else {
-                Write-Host "Nenhuma configuração encontrada para 'Replace a process level token'."
+                Write-Host "No settings found for 'Replace a process level token" -ForegroundColor Red
             }
 
             # Remove o arquivo de política exportado
             Remove-Item -Path $seceditOutputPath
-
     }
 
     ValidateServerRules
